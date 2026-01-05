@@ -28,7 +28,7 @@ end
 function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do
-            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.cells[i][j].size, self.cells[i][j].size)
+            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
         end
     end
 end

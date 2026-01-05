@@ -30,7 +30,7 @@ function grid:mousepressed(x, y, button)
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
-            local iX, iY = cell.x, cell.y 
+            local iX, iY = cell.x, cell.y
             if x > iX and x < iX + self.size and y > iY and y < iY + self.size then
                 if cell.pulses < 4 and cell.name == currentPlayer.name then
                     cell.pulses = cell.pulses + 1
@@ -44,9 +44,12 @@ function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
+            local radius = self.size / 1.5
+            local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
+
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
-            for i = 1, cell.pulses do
-                
+            if cell.pulses == 1 then
+                love.graphics.circle("fill", cx, cy, radius)
             end
         end
     end

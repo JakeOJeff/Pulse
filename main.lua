@@ -9,6 +9,9 @@ function love.load()
     grid:load()
 end
 
+function love.mousepressed(x, y, button)
+    grid:mousepressed(x, y, button)
+end
 
 function love.draw()
     grid:draw()

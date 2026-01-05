@@ -20,4 +20,5 @@ players = {
     }
 }
 activePlayers = players
-currentPlayer = players[1]
+playerIndex = 1
+currentPlayer = activePlayers[playerIndex]

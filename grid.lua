@@ -13,7 +13,10 @@ function grid:load()
                 self.cells[i] = {}
 
         for j = 1, self.hC do
-            self.cells[i][j] = {}
+            self.cells[i][j] = {
+                x = self.size + (i - 1) * self.size,
+                y = self.size + (j - 1) * self.size,
+            }
         end
     end
 end
@@ -25,7 +28,7 @@ end
 function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do
-            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y)
+            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.cells[i][j].size, self.cells[i][j].size)
         end
     end
 end

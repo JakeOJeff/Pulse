@@ -5,10 +5,17 @@ function grid:load()
     self.wC = 5
     self.hC = 20
 
-    self.size = wW/(self.wC + 2)
+    self.size = wW / (self.wC + 2)
 
     self.width = self.size * self.wC
     self.height = self.size * self.hC
+    for i = 1, self.wC do
+                self.cells[i] = {}
+
+        for j = 1, self.hC do
+            self.cells[i][j] = {}
+        end
+    end
 end
 
 function grid:update(dt)
@@ -16,7 +23,11 @@ function grid:update(dt)
 end
 
 function grid:draw()
-
+    for i = 1, self.wC do
+        for j = 1, self.hC do
+            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y)
+        end
+    end
 end
 
 return grid

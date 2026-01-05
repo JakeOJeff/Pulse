@@ -43,9 +43,14 @@ end
 function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do
+            local cell = self.cells[i][j]
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            for i = 1, cell.pulses do
+                
+            end
         end
     end
+
     love.graphics.setColor(currentPlayer.color)
     love.graphics.print("Current Player", self.size, self.height + 20)
 end

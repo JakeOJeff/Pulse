@@ -56,7 +56,7 @@ function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
-            local radius = self.size / 1.5
+            local radius = self.size / 2 / 2
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
 
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)

@@ -62,6 +62,11 @@ function grid:draw()
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             if cell.pulses == 1 then
                 love.graphics.circle("fill", cx, cy, radius)
+            elseif cell.pulses == 2 then
+                love.graphics.circle("fill", cx - self.size/4, cy, radius/1.5)
+                love.graphics.circle("fill", cx + self.size/4, cy, radius/1.5)
+            elseif cell.pulses == 3 then
+                
             end
             love.graphics.print(cell.pulses, cx, cy)
         end

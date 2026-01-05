@@ -66,7 +66,9 @@ function grid:draw()
                 love.graphics.circle("fill", cx - self.size/4, cy, radius/1.5)
                 love.graphics.circle("fill", cx + self.size/4, cy, radius/1.5)
             elseif cell.pulses == 3 then
-                
+                love.graphics.circle("fill", cx, cy - self.size/4, radius/2)
+                love.graphics.circle("fill", cx - self.size/4, cy + self.size/4, radius/2)
+                love.graphics.circle("fill", cx + self.size/4, cy + self.size/4, radius/2)
             end
             love.graphics.print(cell.pulses, cx, cy)
         end

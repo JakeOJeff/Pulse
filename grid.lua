@@ -5,7 +5,7 @@ function grid:load()
     self.wC = 5
     self.hC = 20
 
-    self.size = 20
+    self.size = wW/(self.wC + 2)
 
     self.width = self.size * self.wC
     self.height = self.size * self.hC

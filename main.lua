@@ -3,6 +3,8 @@ wH = love.graphics.getHeight()
 
 grid = require("grid")
 
+require("player")
+
 function love.load()
     grid:load()
 end

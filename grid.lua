@@ -42,6 +42,17 @@ function grid:update(dt)
             end
         end
     end
+
+    self.explosionTimer = self.explosionTimer + dt
+
+    if self.explosionTimer >= self.explosionDelay then
+        self.explosionTimer = 0
+        
+        local e = table.remove(grid.explosionQueue, 1)
+        if e then
+            explodeCell(self.cells[e.i][e.j], e.i, e.j)
+        end
+    end
 end
 
 function queueExplosion(cell, i, j)
@@ -98,7 +109,7 @@ function grid:mousepressed(x, y, button)
                         incrementValue = true
                     elseif cell.pulses >= 4 and cell.name == currentPlayer.name then
                                                 cell.pulses = cell.pulses + 1
-                        explodeCell(cell, i, j)
+                        queueExplosion(cell, i, j)
                         incrementValue = true
                     end
                     if incrementValue then

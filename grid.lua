@@ -17,6 +17,7 @@ function grid:load()
                 x = self.size + (i - 1) * self.size,
                 y = self.size + (j - 1) * self.size,
                 name = "",
+                color = { 1, 1, 1 },
                 pulses = 0
             }
         end
@@ -34,12 +35,18 @@ function grid:mousepressed(x, y, button)
                 local cell = self.cells[i][j]
                 local iX, iY = cell.x, cell.y
                 if x > iX and x < iX + self.size and y > iY and y < iY + self.size then
+                    local incrementValue = false
                     if cell.pulses < 1 then
                         cell.name = currentPlayer.name
+                        cell.color = currentPlayer.color
                         cell.pulses = cell.pulses + 1
+                        incrementValue = true
                     elseif cell.pulses < 4 and cell.name == currentPlayer.name then
                         cell.pulses = cell.pulses + 1
-                        if playerIndex < #activePlayers then
+                        incrementValue = true
+                    end
+                    if incrementValue then
+                        if playerIndex > #activePlayers - 1 then
                             playerIndex = 1
                         else
                             playerIndex = playerIndex + 1
@@ -59,16 +66,17 @@ function grid:draw()
             local radius = self.size / 2 / 2
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
 
+            love.graphics.setColor(cell.color)
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             if cell.pulses == 1 then
                 love.graphics.circle("fill", cx, cy, radius)
             elseif cell.pulses == 2 then
-                love.graphics.circle("fill", cx - self.size/4, cy, radius/1.5)
-                love.graphics.circle("fill", cx + self.size/4, cy, radius/1.5)
+                love.graphics.circle("fill", cx - self.size / 4, cy, radius / 1.5)
+                love.graphics.circle("fill", cx + self.size / 4, cy, radius / 1.5)
             elseif cell.pulses == 3 then
-                love.graphics.circle("fill", cx, cy - self.size/4, radius/2)
-                love.graphics.circle("fill", cx - self.size/4, cy + self.size/4, radius/2)
-                love.graphics.circle("fill", cx + self.size/4, cy + self.size/4, radius/2)
+                love.graphics.circle("fill", cx, cy - self.size / 4, radius / 2)
+                love.graphics.circle("fill", cx - self.size / 4, cy + self.size / 4, radius / 2)
+                love.graphics.circle("fill", cx + self.size / 4, cy + self.size / 4, radius / 2)
             end
             love.graphics.print(cell.pulses, cx, cy)
         end

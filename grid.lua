@@ -25,7 +25,30 @@ function grid:load()
 end
 
 function grid:update(dt)
+    for i = 1, self.wC do
+        for j = 1, self.hC do
+            local cell = self.cells[i][j]
+            if cell.pulses > 4 then
+                explodeCell(cell, i, j)
+            end
+        end
+    end
+end
 
+function explodeCell(cell, i, j)
+    local cells = grid.cells
+    cell.pulses = 1
+    cells[i - 1][j - 1].pulses = cells[i - 1][j - 1].pulses + 1
+    cells[i - 1][j - 1].color = cell.color
+
+    cells[i - 1][j].pulses = cells[i - 1][j].pulses + 1
+    cells[i - 1][j].color = cell.color
+
+    cells[i - 1][j - 1].pulses = cells[i - 1][j - 1].pulses + 1
+    cells[i - 1][j - 1].color = cell.color
+
+    cells[i - 1][j - 1].pulses = cells[i - 1][j - 1].pulses + 1
+    cells[i - 1][j - 1].color = cell.color
 end
 
 function grid:mousepressed(x, y, button)
@@ -41,7 +64,7 @@ function grid:mousepressed(x, y, button)
                         cell.color = currentPlayer.color
                         cell.pulses = cell.pulses + 1
                         incrementValue = true
-                    elseif cell.pulses < 4 and cell.name == currentPlayer.name then
+                    elseif cell.pulses < 5 and cell.name == currentPlayer.name then
                         cell.pulses = cell.pulses + 1
                         incrementValue = true
                     end
@@ -73,19 +96,19 @@ function grid:draw()
             local positions = {}
             local coordinates = {}
             if cell.pulses == 1 then
-                table.insert(positions, { cx + dx, cy + dx, radius  + dy})
+                table.insert(positions, { cx + dx, cy + dx, radius + dy })
             elseif cell.pulses == 2 then
-                table.insert(positions, { cx - self.size / 4  + dx, cy + dx, radius / 1.5 + dy })
-                table.insert(positions, { cx + self.size / 4  + dx, cy + dx, radius / 1.5 + dy })
+                table.insert(positions, { cx - self.size / 4 + dx, cy + dx, radius / 1.5 + dy })
+                table.insert(positions, { cx + self.size / 4 + dx, cy + dx, radius / 1.5 + dy })
             elseif cell.pulses == 3 then
-                table.insert(positions, { cx + dx, cy - self.size / 4 + dx, radius / 2  + dy})
-                table.insert(positions, { cx - self.size / 4 + dx, cy + self.size / 4 + dx, radius / 2  + dy})
-                table.insert(positions, { cx + self.size / 4 + dx, cy + self.size / 4 + dx, radius / 2  + dy})
+                table.insert(positions, { cx + dx, cy - self.size / 4 + dx, radius / 2 + dy })
+                table.insert(positions, { cx - self.size / 4 + dx, cy + self.size / 4 + dx, radius / 2 + dy })
+                table.insert(positions, { cx + self.size / 4 + dx, cy + self.size / 4 + dx, radius / 2 + dy })
             elseif cell.pulses == 4 then
                 table.insert(positions, { cx - self.size / 4 + dx, cy + dx, radius / 2.5 + dy })
                 table.insert(positions, { cx + dx, cy - self.size / 4 + dx, radius / 2.5 + dy })
-                table.insert(positions, { cx + self.size / 4 + dx, cy + dx, radius / 2.5  + dy})
-                table.insert(positions, { cx + dx, cy + self.size / 4 + dx, radius / 2.5  + dy})
+                table.insert(positions, { cx + self.size / 4 + dx, cy + dx, radius / 2.5 + dy })
+                table.insert(positions, { cx + dx, cy + self.size / 4 + dx, radius / 2.5 + dy })
             end
             for i = 1, #positions do
                 love.graphics.circle("fill", positions[i][1], positions[i][2], positions[i][3])

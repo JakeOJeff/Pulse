@@ -34,20 +34,11 @@ function grid:load()
 end
 
 function grid:update(dt)
-    for i = 1, self.wC do
-        for j = 1, self.hC do
-            local cell = self.cells[i][j]
-            if cell.pulses >= 4 then
-                queueExplosion(cell, i, j)
-            end
-        end
-    end
-
     self.explosionTimer = self.explosionTimer + dt
 
     if self.explosionTimer >= self.explosionDelay then
         self.explosionTimer = 0
-        
+
         local e = table.remove(grid.explosionQueue, 1)
         if e then
             explodeCell(self.cells[e.i][e.j], e.i, e.j)
@@ -63,29 +54,30 @@ function queueExplosion(cell, i, j)
 end
 
 function explodeCell(cell, i, j)
-    print("exploding")
     local cells = grid.cells
+
+    -- RESET exploding cell
     cell.pulses = 1
+    cell.exploding = false
 
     local dirs = {
-        { 0, -1 },
+        { 0,  -1 },
         { -1, 0 },
-        { 0, 1 },
-        { 1, 0 }
+        { 0,  1 },
+        { 1,  0 }
     }
 
     for _, d in ipairs(dirs) do
         local ni, nj = i + d[1], j + d[2]
 
         if cells[ni] and cells[ni][nj] then
-            print(cell.name)
             local n = cells[ni][nj]
             n.pulses = n.pulses + 1
             n.color = cell.color
             n.name = cell.name
 
             if n.pulses > 4 then
-                explodeCell(n, ni, nj)
+                queueExplosion(n, ni, nj)
             end
         end
     end
@@ -98,18 +90,22 @@ function grid:mousepressed(x, y, button)
                 local cell = self.cells[i][j]
                 local iX, iY = cell.x, cell.y
                 if x > iX and x < iX + self.size and y > iY and y < iY + self.size then
+                    -- Skip if cell is already exploding
+                    if cell.exploding then
+                        return
+                    end
+                    
                     local incrementValue = false
-                    if cell.pulses < 1 then
+                    if cell.pulses == 0 then
                         cell.name = currentPlayer.name
                         cell.color = currentPlayer.color
-                        cell.pulses = cell.pulses + 1
+                        cell.pulses = 1
                         incrementValue = true
-                    elseif cell.pulses < 4 and cell.name == currentPlayer.name then
+                    elseif cell.name == currentPlayer.name then
                         cell.pulses = cell.pulses + 1
-                        incrementValue = true
-                    elseif cell.pulses >= 4 and cell.name == currentPlayer.name then
-                                                cell.pulses = cell.pulses + 1
-                        queueExplosion(cell, i, j)
+                        if cell.pulses > 4 then
+                            queueExplosion(cell, i, j)
+                        end
                         incrementValue = true
                     end
                     if incrementValue then
@@ -125,7 +121,6 @@ function grid:mousepressed(x, y, button)
         end
     end
 end
-
 function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do

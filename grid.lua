@@ -34,20 +34,25 @@ function grid:load()
 end
 
 function grid:update(dt)
-    self.explosionTimer = self.explosionTimer + dt
+    if #grid.explosionQueue > 0 then
+        self.explosionTimer = self.explosionTimer + dt
+        print(self.explosionTimer)
 
-    if self.explosionTimer >= self.explosionDelay then
-        self.explosionTimer = 0
+        if self.explosionTimer >= self.explosionDelay then
+            print("Exploding")
+            self.explosionTimer = 0
 
-        local e = table.remove(grid.explosionQueue, 1)
-        if e then
-            explodeCell(self.cells[e.i][e.j], e.i, e.j)
+            local e = table.remove(grid.explosionQueue, 1)
+            if e then
+                explodeCell(self.cells[e.i][e.j], e.i, e.j)
+            end
         end
     end
 end
 
 function queueExplosion(cell, i, j)
     if not cell.exploding then
+        print("Queueud")
         cell.exploding = true
         table.insert(grid.explosionQueue, { i = i, j = j })
     end
@@ -94,7 +99,7 @@ function grid:mousepressed(x, y, button)
                     if cell.exploding then
                         return
                     end
-                    
+
                     local incrementValue = false
                     if cell.pulses == 0 then
                         cell.name = currentPlayer.name
@@ -121,6 +126,7 @@ function grid:mousepressed(x, y, button)
         end
     end
 end
+
 function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do

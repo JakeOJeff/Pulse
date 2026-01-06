@@ -26,8 +26,8 @@ function grid:load()
                 color = { 1, 1, 1 },
                 pulses = 0,
 
+
                 exploding = false,
-                explodeTimer = 0,
             }
         end
     end
@@ -131,12 +131,13 @@ function grid:draw()
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
-            local radius = self.size / 2 / 2
+            local radius = self.size / 4
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
             local dx, dy = math.sin(love.timer.getTime() * cell.pulses), math.cos(love.timer.getTime() * cell.pulses)
 
-            love.graphics.setColor(cell.color)
+            love.graphics.setColor(1,1,1,0.5)
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            love.graphics.setColor(cell.color)
 
             local positions = {}
             local coordinates = {}

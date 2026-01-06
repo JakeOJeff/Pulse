@@ -9,6 +9,12 @@ function grid:load()
 
     self.width = self.size * self.wC
     self.height = self.size * self.hC
+
+    self.explosionQueue = {}
+    self.explosionDelay = 0.08
+    self.explosionTimer = 0
+
+
     for i = 1, self.wC do
         self.cells[i] = {}
 
@@ -18,7 +24,10 @@ function grid:load()
                 y = self.size + (j - 1) * self.size,
                 name = "",
                 color = { 1, 1, 1 },
-                pulses = 0
+                pulses = 0,
+
+                exploding = false,
+                explodeTimer = 0,
             }
         end
     end
@@ -29,9 +38,16 @@ function grid:update(dt)
         for j = 1, self.hC do
             local cell = self.cells[i][j]
             if cell.pulses >= 4 then
-                explodeCell(cell, i, j)
+                queueExplosion(cell, i, j)
             end
         end
+    end
+end
+
+function queueExplosion(cell, i, j)
+    if not cell.exploding then
+        cell.exploding = true
+        table.insert(grid.explosionQueue, { i = i, j = j })
     end
 end
 

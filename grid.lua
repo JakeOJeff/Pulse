@@ -25,7 +25,7 @@ function grid:load()
                 name = "",
                 color = { 1, 1, 1 },
                 pulses = 0,
-
+                offset = math.random(0, 1),
 
                 exploding = false,
             }
@@ -133,7 +133,7 @@ function grid:draw()
             local cell = self.cells[i][j]
             local radius = self.size / 4
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
-            local dx, dy = math.sin(love.timer.getTime() * cell.pulses), math.cos(love.timer.getTime() * cell.pulses)
+            local dx, dy = math.sin(love.timer.getTime() * cell.pulses + cell.offset), math.cos(love.timer.getTime() * cell.pulses)
 
             love.graphics.setColor(1,1,1,0.5)
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)

@@ -68,17 +68,33 @@ function grid:draw()
 
             love.graphics.setColor(cell.color)
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+
+            local positions = {}
+            local coordinates = {}
             if cell.pulses == 1 then
                 love.graphics.circle("fill", cx, cy, radius)
+                table.insert(positions, { cx, cy, radius })
             elseif cell.pulses == 2 then
-                love.graphics.circle("fill", cx - self.size / 4, cy, radius / 1.5)
-                love.graphics.circle("fill", cx + self.size / 4, cy, radius / 1.5)
+                table.insert(positions, { cx - self.size / 4, cy, radius / 1.5 })
+                table.insert(positions, { cx + self.size / 4, cy, radius / 1.5 })
             elseif cell.pulses == 3 then
-                love.graphics.circle("fill", cx, cy - self.size / 4, radius / 2)
-                love.graphics.circle("fill", cx - self.size / 4, cy + self.size / 4, radius / 2)
-                love.graphics.circle("fill", cx + self.size / 4, cy + self.size / 4, radius / 2)
+                table.insert(positions, { cx, cy - self.size / 4, radius / 2 })
+                table.insert(positions, { cx - self.size / 4, cy + self.size / 4, radius / 2 })
+                table.insert(positions, { cx + self.size / 4, cy + self.size / 4, radius / 2 })
+            elseif cell.pulses == 4 then
+                table.insert(positions, { cx - self.size / 4, cy, radius / 2.5 })
+                table.insert(positions, { cx, cy - self.size / 4, radius / 2.5 })
+                table.insert(positions, { cx + self.size / 4, cy, radius / 2.5 })
+                table.insert(positions, { cx, cy + self.size / 4, radius / 2.5 })
             end
-            love.graphics.print(cell.pulses, cx, cy)
+            for i = 1, #positions do
+                love.graphics.circle("fill", positions[i][1], positions[i][2], positions[i][3])
+                table.insert(coordinates, positions[i][1])
+                table.insert(coordinates, positions[i][2])
+            end
+            if #coordinates >= 4 then
+                love.graphics.line(coordinates)
+            end -- love.graphics.print(cell.pulses, cx, cy)
         end
     end
 

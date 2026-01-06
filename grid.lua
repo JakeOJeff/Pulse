@@ -65,6 +65,7 @@ function grid:draw()
             local cell = self.cells[i][j]
             local radius = self.size / 2 / 2
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
+            local dx, dy = math.sin(love.timer.getTime() * cell.pulses), math.cos(love.timer.getTime() * cell.pulses)
 
             love.graphics.setColor(cell.color)
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
@@ -72,28 +73,32 @@ function grid:draw()
             local positions = {}
             local coordinates = {}
             if cell.pulses == 1 then
-                love.graphics.circle("fill", cx, cy, radius)
-                table.insert(positions, { cx, cy, radius })
+                table.insert(positions, { cx + dx, cy + dy, radius })
             elseif cell.pulses == 2 then
-                table.insert(positions, { cx - self.size / 4, cy, radius / 1.5 })
-                table.insert(positions, { cx + self.size / 4, cy, radius / 1.5 })
+                table.insert(positions, { cx - self.size / 4  + dx, cy, radius / 1.5 + dy })
+                table.insert(positions, { cx + self.size / 4  + dx, cy, radius / 1.5 + dy })
             elseif cell.pulses == 3 then
-                table.insert(positions, { cx, cy - self.size / 4, radius / 2 })
-                table.insert(positions, { cx - self.size / 4, cy + self.size / 4, radius / 2 })
-                table.insert(positions, { cx + self.size / 4, cy + self.size / 4, radius / 2 })
+                table.insert(positions, { cx, cy - self.size / 4 + dx, radius / 2  + dy})
+                table.insert(positions, { cx - self.size / 4 + dx, cy + self.size / 4, radius / 2  + dy})
+                table.insert(positions, { cx + self.size / 4 + dx, cy + self.size / 4, radius / 2  + dy})
             elseif cell.pulses == 4 then
-                table.insert(positions, { cx - self.size / 4, cy, radius / 2.5 })
-                table.insert(positions, { cx, cy - self.size / 4, radius / 2.5 })
-                table.insert(positions, { cx + self.size / 4, cy, radius / 2.5 })
-                table.insert(positions, { cx, cy + self.size / 4, radius / 2.5 })
+                table.insert(positions, { cx - self.size / 4 + dx, cy, radius / 2.5 + dy })
+                table.insert(positions, { cx, cy - self.size / 4 + dx, radius / 2.5 + dy })
+                table.insert(positions, { cx + self.size / 4, cy + dx, radius / 2.5  + dy})
+                table.insert(positions, { cx, cy + self.size / 4 + dx, radius / 2.5  + dy})
             end
             for i = 1, #positions do
                 love.graphics.circle("fill", positions[i][1], positions[i][2], positions[i][3])
                 table.insert(coordinates, positions[i][1])
                 table.insert(coordinates, positions[i][2])
             end
+
             if #coordinates >= 4 then
-                love.graphics.line(coordinates)
+                if cell.pulses > 2 then
+                    love.graphics.polygon("fill", coordinates)
+                else
+                    love.graphics.line(coordinates)
+                end
             end -- love.graphics.print(cell.pulses, cx, cy)
         end
     end

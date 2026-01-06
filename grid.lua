@@ -28,7 +28,7 @@ function grid:update(dt)
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
-            if cell.pulses > 4 then
+            if cell.pulses >= 4 then
                 explodeCell(cell, i, j)
             end
         end
@@ -36,19 +36,32 @@ function grid:update(dt)
 end
 
 function explodeCell(cell, i, j)
+    print("exploding")
     local cells = grid.cells
     cell.pulses = 1
-    cells[i - 1][j - 1].pulses = cells[i - 1][j - 1].pulses + 1
-    cells[i - 1][j - 1].color = cell.color
 
-    cells[i - 1][j].pulses = cells[i - 1][j].pulses + 1
-    cells[i - 1][j].color = cell.color
+    local dirs = {
+        { 0, -1 },
+        { -1, 0 },
+        { 0, 1 },
+        { 1, 0 }
+    }
 
-    cells[i - 1][j - 1].pulses = cells[i - 1][j - 1].pulses + 1
-    cells[i - 1][j - 1].color = cell.color
+    for _, d in ipairs(dirs) do
+        local ni, nj = i + d[1], j + d[2]
 
-    cells[i - 1][j - 1].pulses = cells[i - 1][j - 1].pulses + 1
-    cells[i - 1][j - 1].color = cell.color
+        if cells[ni] and cells[ni][nj] then
+            print(cell.name)
+            local n = cells[ni][nj]
+            n.pulses = n.pulses + 1
+            n.color = cell.color
+            n.name = cell.name
+
+            if n.pulses > 4 then
+                explodeCell(n, ni, nj)
+            end
+        end
+    end
 end
 
 function grid:mousepressed(x, y, button)
@@ -64,8 +77,12 @@ function grid:mousepressed(x, y, button)
                         cell.color = currentPlayer.color
                         cell.pulses = cell.pulses + 1
                         incrementValue = true
-                    elseif cell.pulses < 5 and cell.name == currentPlayer.name then
+                    elseif cell.pulses < 4 and cell.name == currentPlayer.name then
                         cell.pulses = cell.pulses + 1
+                        incrementValue = true
+                    elseif cell.pulses >= 4 and cell.name == currentPlayer.name then
+                                                cell.pulses = cell.pulses + 1
+                        explodeCell(cell, i, j)
                         incrementValue = true
                     end
                     if incrementValue then

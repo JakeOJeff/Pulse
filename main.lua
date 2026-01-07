@@ -4,10 +4,11 @@ wH = love.graphics.getHeight()
 grid = require("grid")
 
 require("player")
+require("powerup")
 
 function love.load()
     grid:load()
-
+    loadPlayers()
     font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 24)
 end
 

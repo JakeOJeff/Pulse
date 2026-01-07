@@ -30,8 +30,13 @@ events = {
             for i = 1, grid.wC do
                 for j = 1, grid.hC do
                     local cell = grid.cells[i][j]
-                    if cell.name == player.name then
-                        cell.pulses = 3
+                    if cell.name == player.name and not cell.exploding then
+                        cell.color = player.color
+                        cell.pulses = math.max(cell.pulses, 3)
+
+                        if cell.pulses > 4 then
+                            queueExplosion(cell, i, j)
+                        end
                     end
                 end
             end

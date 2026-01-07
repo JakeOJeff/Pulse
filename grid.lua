@@ -21,7 +21,7 @@ function grid:load()
         self.cells[i] = {}
 
         for j = 1, self.hC do
-            self.cells[i][j] = { 
+            self.cells[i][j] = {
                 x = self.size + (i - 1) * self.size,
                 y = self.size + (j - 1) * self.size,
                 name = "",
@@ -59,6 +59,11 @@ function grid:update(dt)
         end
     else
         self.explosionTime = 0
+        for i = 1, self.wC do
+            for j = 1, self.hC do
+                self.cells[i][j].exploding = false
+            end
+        end
     end
     for i, v in ipairs(activePlayers) do
         v.score = 0
@@ -95,9 +100,9 @@ function grid:update(dt)
                     { cx + self.size / 4 + dx, cy + self.size / 4 + dx, radius / 2 + dy })
             elseif cell.pulses == 4 then
                 table.insert(cell.circles, { cx - self.size / 4 + dx, cy + dx, radius / 2.5 + dy })
-                table.insert(cell.circles, { cx + dx , cy - self.size / 4 + dx, radius / 2.5 + dy })
+                table.insert(cell.circles, { cx + dx, cy - self.size / 4 + dx, radius / 2.5 + dy })
                 table.insert(cell.circles, { cx + self.size / 4 + dx, cy + dx, radius / 2.5 + dy })
-                table.insert(cell.circles, { cx + dx , cy + self.size / 4 + dx, radius / 2.5 + dy })
+                table.insert(cell.circles, { cx + dx, cy + self.size / 4 + dx, radius / 2.5 + dy })
             end
             for i = 1, #cell.circles do
                 table.insert(cell.coordinates, cell.circles[i][1])
@@ -113,9 +118,11 @@ function grid:update(dt)
             -- pulse arrives
             p.targetCell.pulses = p.targetCell.pulses + 1
             p.targetCell.color = p.color
+            p.targetCell.name = p.owner
 
             if p.targetCell.pulses > 4 then
-                queueExplosion(p.targetCell,
+                queueExplosion(
+                    p.targetCell,
                     math.floor((p.tx - self.size) / self.size) + 1,
                     math.floor((p.ty - self.size) / self.size) + 1
                 )
@@ -144,6 +151,7 @@ function explodeCell(cell, i, j)
 
     cell.pulses = 0
     cell.exploding = false
+    cell.name = ""
 
     local dirs = {
         { 0,  -1 },
@@ -169,6 +177,7 @@ function explodeCell(cell, i, j)
                 progress = 0,
                 speed = 2 * (grid.explosionTime + 1),
                 color = cell.color,
+                owner = cell.name,
                 targetCell = target
             })
         end
@@ -177,6 +186,9 @@ end
 
 function grid:mousepressed(x, y, button)
     if button == 1 then
+        if #self.explosionQueue > 0 or #self.movingPulses > 0 then
+            return
+        end
         for i = 1, self.wC do
             for j = 1, self.hC do
                 local cell = self.cells[i][j]
@@ -186,6 +198,8 @@ function grid:mousepressed(x, y, button)
                     if cell.exploding then
                         return
                     end
+
+
 
                     local incrementValue = false
                     if cell.pulses == 0 then
@@ -201,11 +215,19 @@ function grid:mousepressed(x, y, button)
                         incrementValue = true
                     end
                     if incrementValue then
-                        if playerIndex > #activePlayers - 1 then
-                            playerIndex = 1
-                        else
-                            playerIndex = playerIndex + 1
-                        end
+                        -- end current player's turn
+                        -- if powerupRoundsLeft > 0 then
+                        --     powerupRoundsLeft = powerupRoundsLeft - 1
+                        -- end
+
+                        -- if powerupRoundsLeft == 0 then
+                        --     local randomVal = math.random(1, #events)
+                        --     events[randomVal].func(currentPlayer)
+                        --     powerupRoundsLeft = math.random(2, 6)
+                        -- end
+
+                        -- next player
+                        playerIndex = playerIndex % #activePlayers + 1
                         currentPlayer = activePlayers[playerIndex]
                     end
                 end
@@ -244,10 +266,10 @@ function grid:draw()
     end
 
     love.graphics.setColor(currentPlayer.color)
-    love.graphics.print("Current Player ", self.size, self.size + self.height + 20)
+    love.graphics.print("Current Player " .. powerupRoundsLeft, self.size, self.size + self.height + 20)
     for i, v in ipairs(activePlayers) do
         love.graphics.setColor(v.color)
-        love.graphics.print(v.name.." | "..v.score.." | ", self.size, self.size + self.height + 50 + 20 * i)
+        love.graphics.print(v.name .. " | " .. v.score .. " | ", self.size, self.size + self.height + 50 + 20 * i)
     end
     love.graphics.setColor(1, 1, 1)
 end

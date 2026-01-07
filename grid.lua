@@ -70,7 +70,7 @@ function grid:update(dt)
             local cell = self.cells[i][j]
 
             for i, v in ipairs(activePlayers) do
-                if v.name == cell.name then
+                if v.name == cell.name and #self.explosionQueue == 0 and #self.movingPulses == 0 then
                     v.score = v.score + cell.pulses
                 end
             end

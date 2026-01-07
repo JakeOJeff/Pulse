@@ -9,7 +9,7 @@ require("powerup")
 function love.load()
     grid:load()
     loadPlayers()
-    font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 24)
+    font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 20)
 end
 
 function love.update(dt)

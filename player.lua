@@ -24,7 +24,7 @@ playerIndex = 1
 currentPlayer = activePlayers[playerIndex]
 
 function loadPlayers()
-    powerupRoundsLeft = math.random(1, 6)
+    powerupRoundsLeft = love.math.random(1, 6)
 end
 function updatePlayers()
 

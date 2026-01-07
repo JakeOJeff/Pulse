@@ -27,7 +27,7 @@ function grid:load()
                 name = "",
                 color = { 1, 1, 1 },
                 pulses = 0,
-                offset = math.random(0, 1),
+                offset = love.math.random(0, 1),
                 circles = {},
                 coordinates = {},
 
@@ -197,9 +197,6 @@ function grid:mousepressed(x, y, button)
                     if cell.exploding then
                         return
                     end
-
-
-
                     local incrementValue = false
                     if cell.pulses == 0 then
                         cell.name = currentPlayer.name
@@ -220,10 +217,10 @@ function grid:mousepressed(x, y, button)
                         end
 
                         if powerupRoundsLeft == 0 then
-                            local randomVal = math.random(1, #events)
+                            local randomVal = love.math.random(1, #events)
                             events[randomVal].func(currentPlayer)
                             recentPowerup = events[randomVal].name
-                            powerupRoundsLeft = math.random(2, 6)
+                            powerupRoundsLeft = love.math.random(2, 6)
                         end
 
                         -- next player
@@ -243,6 +240,7 @@ function grid:draw()
 
 
             love.graphics.setColor(1, 1, 1, 0.5)
+            love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 0.3)
             love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             for _, p in ipairs(self.movingPulses) do
                 love.graphics.setColor(p.color)
@@ -266,7 +264,7 @@ function grid:draw()
     end
 
     love.graphics.setColor(currentPlayer.color)
-    love.graphics.print("Current Player " .. powerupRoundsLeft, self.size, self.size + self.height + 20)
+    love.graphics.print("|Current Player " .. powerupRoundsLeft.. "\n| Powerup "..recentPowerup, self.size, self.size + self.height + 20)
     for i, v in ipairs(activePlayers) do
         love.graphics.setColor(v.color)
         love.graphics.print(v.name .. " | " .. v.score .. " | ", self.size, self.size + self.height + 50 + 20 * i)

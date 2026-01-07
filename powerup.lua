@@ -23,6 +23,7 @@
 ]]
 
 powerupRoundsLeft = 0
+recentPowerup = ""
 events = {
     {
         name = "Triple Increment", -- Increases all pulses of the player to 3
@@ -41,5 +42,60 @@ events = {
                 end
             end
         end
-    }
+    },
+
+    {
+        name = "Double Increment", -- Increases all pulses of the player to 3
+        func = function(player)
+            for i = 1, grid.wC do
+                for j = 1, grid.hC do
+                    local cell = grid.cells[i][j]
+                    if cell.name == player.name and not cell.exploding then
+                        cell.color = player.color
+                        cell.pulses = math.min(5, cell.pulses + 2)
+
+                        if cell.pulses > 4 then
+                            queueExplosion(cell, i, j)
+                        end
+                    end
+                end
+            end
+        end
+    },
+
+    {
+        name = "Explode All", -- Increases all pulses of the player to 3
+        func = function(player)
+            for i = 1, grid.wC do
+                for j = 1, grid.hC do
+                    local cell = grid.cells[i][j]
+                    if cell.name == player.name and not cell.exploding then
+                        cell.color = player.color
+                        cell.pulses = 5
+
+                        if cell.pulses > 4 then
+                            queueExplosion(cell, i, j)
+                        end
+                    end
+                end
+            end
+        end
+    },
+
+    {
+        name = "Create Five", -- Increases all pulses of the player to 3
+        func = function(player)
+            local count = 5
+            for i = 1, grid.wC do
+                for j = 1, grid.hC do
+                    local cell = grid.cells[i][j]
+                    if cell.pulses == 0 and not cell.exploding and count > 0 then
+                        cell.color = player.color
+                        cell.pulses = 1
+                        count = count - 1
+                    end
+                end
+            end
+        end
+    },
 }

@@ -222,6 +222,7 @@ function grid:mousepressed(x, y, button)
                         if powerupRoundsLeft == 0 then
                             local randomVal = math.random(1, #events)
                             events[randomVal].func(currentPlayer)
+                            recentPowerup = events[randomVal].name
                             powerupRoundsLeft = math.random(2, 6)
                         end
 

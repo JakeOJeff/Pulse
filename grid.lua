@@ -13,6 +13,7 @@ function grid:load()
     self.explosionQueue = {}
     self.explosionDelay = .08
     self.explosionTimer = 0
+    self.explosionTime = 0
     self.movingPulses = {}
 
 
@@ -20,7 +21,7 @@ function grid:load()
         self.cells[i] = {}
 
         for j = 1, self.hC do
-            self.cells[i][j] = {
+            self.cells[i][j] = { 
                 x = self.size + (i - 1) * self.size,
                 y = self.size + (j - 1) * self.size,
                 name = "",
@@ -36,7 +37,7 @@ function grid:load()
 
             self.cells[i][j].name = "Red"
             self.cells[i][j].color = { 1, 0, 0 }
-            self.cells[i][j].pulses = math.random(3, 4)
+            self.cells[i][j].pulses = 4
         end
     end
 end
@@ -44,6 +45,7 @@ end
 function grid:update(dt)
     if #grid.explosionQueue > 0 then
         self.explosionTimer = self.explosionTimer + dt
+        self.explosionTime = self.explosionTime + dt
         print(self.explosionTimer)
 
         if self.explosionTimer >= self.explosionDelay then
@@ -55,6 +57,8 @@ function grid:update(dt)
                 explodeCell(self.cells[e.i][e.j], e.i, e.j)
             end
         end
+    else
+        self.explosionTime = 0
     end
 
 
@@ -62,10 +66,7 @@ function grid:update(dt)
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
-            local dv = 0
-            if cell.exploding then
-                dv = 3
-            end
+
             local radius = self.size / 4
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
             local dx, dy = math.sin(love.timer.getTime() * cell.pulses + cell.offset),
@@ -85,10 +86,10 @@ function grid:update(dt)
                 table.insert(cell.circles,
                     { cx + self.size / 4 + dx, cy + self.size / 4 + dx, radius / 2 + dy })
             elseif cell.pulses == 4 then
-                table.insert(cell.circles, { cx - self.size / 4 + dx, cy + dx - dv, radius / 2.5 + dy })
-                table.insert(cell.circles, { cx + dx - dv, cy - self.size / 4 + dx, radius / 2.5 + dy })
-                table.insert(cell.circles, { cx + self.size / 4 + dx, cy + dx + dv, radius / 2.5 + dy })
-                table.insert(cell.circles, { cx + dx + dv, cy + self.size / 4 + dx, radius / 2.5 + dy })
+                table.insert(cell.circles, { cx - self.size / 4 + dx, cy + dx, radius / 2.5 + dy })
+                table.insert(cell.circles, { cx + dx , cy - self.size / 4 + dx, radius / 2.5 + dy })
+                table.insert(cell.circles, { cx + self.size / 4 + dx, cy + dx, radius / 2.5 + dy })
+                table.insert(cell.circles, { cx + dx , cy + self.size / 4 + dx, radius / 2.5 + dy })
             end
             for i = 1, #cell.circles do
                 table.insert(cell.coordinates, cell.circles[i][1])
@@ -158,7 +159,7 @@ function explodeCell(cell, i, j)
                 tx = tx,
                 ty = ty,
                 progress = 0,
-                speed = 3,
+                speed = 2 * (grid.explosionTime + 1),
                 color = cell.color,
                 targetCell = target
             })

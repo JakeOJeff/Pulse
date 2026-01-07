@@ -151,7 +151,6 @@ function explodeCell(cell, i, j)
 
     cell.pulses = 0
     cell.exploding = false
-    cell.name = ""
 
     local dirs = {
         { 0,  -1 },
@@ -216,15 +215,15 @@ function grid:mousepressed(x, y, button)
                     end
                     if incrementValue then
                         -- end current player's turn
-                        -- if powerupRoundsLeft > 0 then
-                        --     powerupRoundsLeft = powerupRoundsLeft - 1
-                        -- end
+                        if powerupRoundsLeft > 0 then
+                            powerupRoundsLeft = powerupRoundsLeft - 1
+                        end
 
-                        -- if powerupRoundsLeft == 0 then
-                        --     local randomVal = math.random(1, #events)
-                        --     events[randomVal].func(currentPlayer)
-                        --     powerupRoundsLeft = math.random(2, 6)
-                        -- end
+                        if powerupRoundsLeft == 0 then
+                            local randomVal = math.random(1, #events)
+                            events[randomVal].func(currentPlayer)
+                            powerupRoundsLeft = math.random(2, 6)
+                        end
 
                         -- next player
                         playerIndex = playerIndex % #activePlayers + 1

@@ -32,7 +32,7 @@ events = {
                     local cell = grid.cells[i][j]
                     if cell.name == player.name and not cell.exploding then
                         cell.color = player.color
-                        cell.pulses = math.max(cell.pulses, 3)
+                        cell.pulses = math.min(5, cell.pulses + 3)
 
                         if cell.pulses > 4 then
                             queueExplosion(cell, i, j)

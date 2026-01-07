@@ -22,3 +22,10 @@ players = {
 activePlayers = players
 playerIndex = 1
 currentPlayer = activePlayers[playerIndex]
+
+function loadPlayers()
+    powerupRoundsLeft = math.random(1, 6)
+end
+function updatePlayers()
+
+end

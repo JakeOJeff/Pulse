@@ -35,9 +35,9 @@ function grid:load()
 
             }
 
-            self.cells[i][j].name = "Red"
-            self.cells[i][j].color = { 1, 0, 0 }
-            self.cells[i][j].pulses = 4
+            -- self.cells[i][j].name = "Red"
+            -- self.cells[i][j].color = { 1, 0, 0 }
+            -- self.cells[i][j].pulses = 4
         end
     end
 end
@@ -60,12 +60,20 @@ function grid:update(dt)
     else
         self.explosionTime = 0
     end
-
+    for i, v in ipairs(activePlayers) do
+        v.score = 0
+    end
 
     -- Iterate and refactor coordinates
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
+
+            for i, v in ipairs(activePlayers) do
+                if v.name == cell.name then
+                    v.score = v.score + cell.pulses
+                end
+            end
 
             local radius = self.size / 4
             local cx, cy = cell.x + self.size / 2, cell.y + self.size / 2
@@ -236,7 +244,11 @@ function grid:draw()
     end
 
     love.graphics.setColor(currentPlayer.color)
-    love.graphics.print("Current Player", self.size, self.size + self.height + 20)
+    love.graphics.print("Current Player ", self.size, self.size + self.height + 20)
+    for i, v in ipairs(activePlayers) do
+        love.graphics.setColor(v.color)
+        love.graphics.print(v.name.." | "..v.score.." | ", self.size, self.size + self.height + 50 + 20 * i)
+    end
     love.graphics.setColor(1, 1, 1)
 end
 

@@ -15,6 +15,8 @@ end
 
 function love.mousepressed(x, y, button)
     grid:mousepressed(x, y, button)
+
+
 end
 
 function love.draw()

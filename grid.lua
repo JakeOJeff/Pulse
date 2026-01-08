@@ -17,6 +17,7 @@ function grid:load()
     self.movingPulses = {}
 
     self.roundCount = 0
+    self.turnResolved = true
 
 
     for i = 1, self.wC do
@@ -69,7 +70,6 @@ function grid:update(dt)
     end
     for i, v in ipairs(activePlayers) do
         v.score = 0
-        
     end
 
     -- Iterate and refactor coordinates
@@ -139,7 +139,10 @@ function grid:update(dt)
         end
     end
 
-    if #self.explosionQueue == 0 and #self.movingPulses == 0 then
+    if self.turnResolved and
+        #self.explosionQueue == 0 and
+        #self.movingPulses == 0 then
+        self.turnResolved = false
         self:evaluateWinState()
     end
 end
@@ -177,13 +180,18 @@ function grid:evaluateWinState()
     end
 
     activePlayers = remaining
+    -- Fix playerIndex if out of range
+    if playerIndex > #activePlayers then
+        playerIndex = 1
+    end
 
-    if #activePlayers == 1 then
-        winner = activePlayers[1]
+    currentPlayer = activePlayers[playerIndex]
+
+    if #remaining == 1 then
+        winner = remaining[1]
         gameState = "WIN"
     end
 end
-
 
 function queueExplosion(cell, i, j)
     if not cell.exploding then
@@ -276,6 +284,7 @@ function grid:mousepressed(x, y, button)
                         -- next player
                         playerIndex = playerIndex % #activePlayers + 1
                         currentPlayer = activePlayers[playerIndex]
+                        self.turnResolved = true
                     end
                 end
             end

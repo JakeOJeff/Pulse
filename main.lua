@@ -10,6 +10,8 @@ function love.load()
     grid:load()
     loadPlayers()
     font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 20)
+    winner = currentPlayer
+    gameState = "WIN"
 end
 
 function love.update(dt)
@@ -18,8 +20,6 @@ end
 
 function love.mousepressed(x, y, button)
     grid:mousepressed(x, y, button)
-
-
 end
 
 function love.draw()

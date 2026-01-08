@@ -16,6 +16,8 @@ function grid:load()
     self.explosionTime = 0
     self.movingPulses = {}
 
+    self.roundCount = 0
+
 
     for i = 1, self.wC do
         self.cells[i] = {}
@@ -137,6 +139,41 @@ function grid:update(dt)
     end
 end
 
+function grid:evaluateWinState()
+    local alivePlayers = {}
+
+
+    for _, p in ipairs(activePlayers) do
+        alivePlayers[p.name] = 0
+    end
+
+    for i = 1, self.wC do
+        for j = 1, self.hC do
+            local cell = self.cells[i][j]
+
+            if cell.name ~= "" then
+                alivePlayers[cell.name] = alivePlayers[cell.name] + cell.pulses
+            end
+        end
+    end
+
+    local remaining = {}
+
+    for _, p in ipairs(activePlayers) do
+        if alivePlayers[p.name] > 0 then
+            table.insert(remaining, p)
+        else
+            p.eliminated = true
+            table.remove(activePlayers, p)
+        end
+    end
+
+    if #remaining == 1 and self.roundCount > 0 then
+        winner = remaining[1]
+        gameState = "WIN"
+    end
+end
+
 function queueExplosion(cell, i, j)
     if not cell.exploding then
         print("Queueud")
@@ -185,7 +222,7 @@ end
 
 function grid:mousepressed(x, y, button)
     if button == 1 then
-        if #self.explosionQueue > 0 or #self.movingPulses > 0 then
+        if #self.explosionQueue > 0 or #self.movingPulses > 0 or winner or gameState then
             return
         end
         for i = 1, self.wC do
@@ -197,13 +234,14 @@ function grid:mousepressed(x, y, button)
                     if cell.exploding then
                         return
                     end
+
                     local incrementValue = false
                     if cell.pulses == 0 then
                         cell.name = currentPlayer.name
                         cell.color = currentPlayer.color
                         cell.pulses = 1
                         incrementValue = true
-                    elseif cell.name == currentPlayer.name then
+                    elseif cell.name == currentPlayer.name or cell.color == currentPlayer.color then
                         cell.pulses = cell.pulses + 1
                         if cell.pulses > 4 then
                             queueExplosion(cell, i, j)
@@ -215,6 +253,7 @@ function grid:mousepressed(x, y, button)
                         if powerupRoundsLeft > 0 then
                             powerupRoundsLeft = powerupRoundsLeft - 1
                         end
+                        self.roundCount = self.roundCount + 1
 
                         if powerupRoundsLeft == 0 then
                             local randomVal = love.math.random(1, #events)
@@ -239,9 +278,18 @@ function grid:draw()
             local cell = self.cells[i][j]
 
 
-            love.graphics.setColor(1, 1, 1, 0.5)
-            love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 0.3)
-            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            if not gameState then
+                love.graphics.setColor(1, 1, 1, 0.5)
+                love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 0.3)
+                love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            elseif gameState == "WIN" and winner then
+                local fluidity = math.abs(math.sin(love.timer.getTime() + j))
+                print(fluidity)
+                love.graphics.setColor(winner.color[1], winner.color[2], winner.color[3], fluidity)
+            end
+                love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+
+
             for _, p in ipairs(self.movingPulses) do
                 love.graphics.setColor(p.color)
                 love.graphics.circle("fill", p.x, p.y, self.size / 6)
@@ -264,7 +312,8 @@ function grid:draw()
     end
 
     love.graphics.setColor(currentPlayer.color)
-    love.graphics.print("|Current Player " .. powerupRoundsLeft.. "\n| Powerup "..recentPowerup, self.size, self.size + self.height + 20)
+    love.graphics.print("|Current Player " .. powerupRoundsLeft .. "\n| Powerup " .. recentPowerup, self.size,
+        self.size + self.height + 20)
     for i, v in ipairs(activePlayers) do
         love.graphics.setColor(v.color)
         love.graphics.print(v.name .. " | " .. v.score .. " | ", self.size, self.size + self.height + 50 + 20 * i)

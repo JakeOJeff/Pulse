@@ -145,7 +145,7 @@ function grid:update(dt)
 end
 
 function grid:evaluateWinState()
-    if self.roundCount <= 3 then
+    if self.roundCount < totalPlayers then
         return
     end
 

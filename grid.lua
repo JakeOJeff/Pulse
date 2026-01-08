@@ -69,6 +69,7 @@ function grid:update(dt)
     end
     for i, v in ipairs(activePlayers) do
         v.score = 0
+        
     end
 
     -- Iterate and refactor coordinates
@@ -137,21 +138,28 @@ function grid:update(dt)
             p.y = p.sy + (p.ty - p.sy) * p.progress
         end
     end
+
+    if #self.explosionQueue == 0 and #self.movingPulses == 0 then
+        self:evaluateWinState()
+    end
 end
 
 function grid:evaluateWinState()
-    local alivePlayers = {}
+    if self.roundCount <= 3 then
+        return
+    end
 
+    local alivePlayers = {}
 
     for _, p in ipairs(activePlayers) do
         alivePlayers[p.name] = 0
     end
 
+    -- count pulses
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
-
-            if cell.name ~= "" then
+            if cell.name ~= "" and alivePlayers[cell.name] ~= nil then
                 alivePlayers[cell.name] = alivePlayers[cell.name] + cell.pulses
             end
         end
@@ -161,18 +169,21 @@ function grid:evaluateWinState()
 
     for _, p in ipairs(activePlayers) do
         if alivePlayers[p.name] > 0 then
+            p.eliminated = false
             table.insert(remaining, p)
         else
             p.eliminated = true
-            table.remove(activePlayers, p)
         end
     end
 
-    if #remaining == 1 and self.roundCount > 0 then
-        winner = remaining[1]
+    activePlayers = remaining
+
+    if #activePlayers == 1 then
+        winner = activePlayers[1]
         gameState = "WIN"
     end
 end
+
 
 function queueExplosion(cell, i, j)
     if not cell.exploding then
@@ -284,10 +295,9 @@ function grid:draw()
                 love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             elseif gameState == "WIN" and winner then
                 local fluidity = math.abs(math.sin(love.timer.getTime() + j))
-                print(fluidity)
                 love.graphics.setColor(winner.color[1], winner.color[2], winner.color[3], fluidity)
             end
-                love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
 
 
             for _, p in ipairs(self.movingPulses) do

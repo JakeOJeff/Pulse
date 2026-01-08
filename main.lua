@@ -10,8 +10,8 @@ function love.load()
     grid:load()
     loadPlayers()
     font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 20)
-    winner = currentPlayer
-    gameState = "WIN"
+    winner = nil
+    gameState = nil
 end
 
 function love.update(dt)

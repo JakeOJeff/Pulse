@@ -22,6 +22,11 @@ function grid:load()
     self.shakeTime = 0
     self.shakeStrength = 0
 
+    self.imgs = {
+        bg = love.graphics.newImage("assets/bg.png"),
+        cell = love.graphics.newImage("assets/cell.png")
+    }
+
 
     for i = 1, self.wC do
         self.cells[i] = {}
@@ -79,7 +84,9 @@ function grid:update(dt)
 
     if self.shakeTime > 0 then
         self.shakeTime = self.shakeTime - dt
-        self.shakeStrength = 0
+    else
+                self.shakeStrength = 0
+
     end
     for i, v in ipairs(activePlayers) do
         v.score = 0
@@ -215,7 +222,6 @@ function queueExplosion(cell, i, j)
 end
 
 function explodeCell(cell, i, j)
-    grid:startShake(10, 2)
     local cx = cell.x + grid.size / 2
     local cy = cell.y + grid.size / 2
 
@@ -251,6 +257,8 @@ function explodeCell(cell, i, j)
             })
         end
     end
+        grid:startShake(grid.explosionTime, 0.15)
+
 end
 
 function grid:mousepressed(x, y, button)
@@ -309,6 +317,11 @@ end
 function grid:draw()
 
     love.graphics.push()
+    love.graphics.scale(1/2, 1/2)
+    love.graphics.draw(self.imgs.bg)
+
+    love.graphics.pop()
+    love.graphics.push()
 
     if self.shakeTime > 0 then
         local dx = love.math.random(-self.shakeStrength, self.shakeStrength)
@@ -321,14 +334,29 @@ function grid:draw()
 
 
             if not gameState then
-                love.graphics.setColor(1, 1, 1, 0.5)
-                love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 0.3)
+                -- love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 1)
+                love.graphics.setColor(1,1,1)
                 love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             elseif gameState == "WIN" and winner then
                 local fluidity = math.abs(math.sin(love.timer.getTime() + j))
-                love.graphics.setColor(winner.color[1], winner.color[2], winner.color[3], fluidity)
+                love.graphics.setColor(1,1,1, fluidity)
             end
-            love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            -- love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            self.cellImgW = self.imgs.cell:getWidth()
+            self.cellImgH = self.imgs.cell:getHeight()
+
+            
+            local scaleX = self.size / self.cellImgW
+            local scaleY = self.size / self.cellImgH
+
+            love.graphics.draw(
+                self.imgs.cell,
+                cell.x,
+                cell.y,
+                0,
+                scaleX,
+                scaleY
+            )
 
 
             for _, p in ipairs(self.movingPulses) do

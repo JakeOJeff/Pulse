@@ -334,9 +334,7 @@ function grid:draw()
 
 
             if not gameState then
-                -- love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 1)
                 love.graphics.setColor(1,1,1)
-                love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             elseif gameState == "WIN" and winner then
                 local fluidity = math.abs(math.sin(love.timer.getTime() + j))
                 love.graphics.setColor(1,1,1, fluidity)
@@ -357,6 +355,8 @@ function grid:draw()
                 scaleX,
                 scaleY
             )
+                love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], .5)
+                love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
 
 
             for _, p in ipairs(self.movingPulses) do

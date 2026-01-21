@@ -2,19 +2,19 @@ currentPlayer = {}
 players = {
     {
         name = "Crimson",
-        color = {0.66, 0.39,0.46}, -- deep red
+        color = {0.76, 0.49,0.56}, -- deep red
         score = 0,
         eliminated = false
     },
     {
         name = "Emerald",
-        color = {0.40, 0.57, 0.60}, -- rich green
+        color = {0.50, 0.67, 0.70}, -- rich green
         score = 0,
         eliminated = false
     },
     {
         name = "Sapphire",
-        color = {0.34, 0.46, 0.67}, -- vivid blue
+        color = {0.44, 0.56, 0.77}, -- vivid blue
         score = 0,
         eliminated = false
     },

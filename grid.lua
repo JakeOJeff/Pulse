@@ -19,6 +19,9 @@ function grid:load()
     self.roundCount = 0
     self.turnResolved = true
 
+    self.shakeTime = 0
+    self.shakeStrength = 0
+
 
     for i = 1, self.wC do
         self.cells[i] = {}
@@ -45,6 +48,11 @@ function grid:load()
     end
 end
 
+function grid:startShake(str, time)
+    self.shakeStrength = str
+    self.shakeTime = time
+end
+
 function grid:update(dt)
     if #grid.explosionQueue > 0 then
         self.explosionTimer = self.explosionTimer + dt
@@ -67,6 +75,11 @@ function grid:update(dt)
                 self.cells[i][j].exploding = false
             end
         end
+    end
+
+    if self.shakeTime > 0 then
+        self.shakeTime = self.shakeTime - dt
+        self.shakeStrength = 0
     end
     for i, v in ipairs(activePlayers) do
         v.score = 0
@@ -202,6 +215,7 @@ function queueExplosion(cell, i, j)
 end
 
 function explodeCell(cell, i, j)
+    grid:startShake(10, 2)
     local cx = cell.x + grid.size / 2
     local cy = cell.y + grid.size / 2
 
@@ -293,6 +307,14 @@ function grid:mousepressed(x, y, button)
 end
 
 function grid:draw()
+
+    love.graphics.push()
+
+    if self.shakeTime > 0 then
+        local dx = love.math.random(-self.shakeStrength, self.shakeStrength)
+        local dy = love.math.random(-self.shakeStrength, self.shakeStrength)
+        love.graphics.translate(dx, dy)
+    end
     for i = 1, self.wC do
         for j = 1, self.hC do
             local cell = self.cells[i][j]
@@ -329,6 +351,8 @@ function grid:draw()
             end
         end
     end
+
+    love.graphics.pop()
 
     love.graphics.setColor(currentPlayer.color)
     love.graphics.print("|Current Player " .. powerupRoundsLeft .. "\n| Powerup " .. recentPowerup, self.size,

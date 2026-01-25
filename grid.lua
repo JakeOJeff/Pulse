@@ -317,7 +317,7 @@ end
 function grid:draw()
 
     love.graphics.push()
-    love.graphics.scale(1/2, 1/2)
+    love.graphics.scale(scale, scale)
     love.graphics.draw(self.imgs.bg)
 
     love.graphics.pop()

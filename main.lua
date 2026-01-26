@@ -33,10 +33,8 @@ function love.draw()
 end
 
 function love.resize(w, h)
-    wW = w
-    wH = h
 
-    scale = defW/wW
+    
 end
  
 --[[

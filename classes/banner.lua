@@ -6,30 +6,46 @@ function banner:load()
 
     self.img = love.graphics.newImage("assets/banner.png")
 
-    self.active = false
+    self.state = "inactive"
 
 
     self.pos = {
-        x = 0,
+        x = - (self.img:getWidth() * scale),
+        y = 0
         
     }
 end
 
 function banner:update(dt)
     
-
+    if self.state == "appearing" then
+        if self.pos.x < 0 then
+            self.pos.x = self.pos.x + 100 * dt
+        end
+    end
 
 end
 
 function banner:setActive()
-    self.active = not self.active    
+    self.state = "appearing"    
 end
 
 
 function banner:draw()
     
-    if self.active then
+    if not self.state == "inactive" then
         
+        love.graphics.push()
+        love.graphics.scale(scale, scale)
+        love.graphics.translate(self.pos.x, self.pos.y)
+
+        love.graphics.draw(self.img)
+
+        love.graphics.pop()
+
     end
 
 end
+
+
+return banner

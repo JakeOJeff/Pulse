@@ -54,7 +54,7 @@ function grid:load()
 end
 
 function grid:startShake(str, time)
-    self.shakeStrength = str
+    self.shakeStrength = str * settings.shakeStrength/10
     self.shakeTime = time
 end
 

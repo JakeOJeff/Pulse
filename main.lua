@@ -1,6 +1,12 @@
 wW = love.graphics.getWidth()
 wH = love.graphics.getHeight()
 
+defW = 1080
+defH = 1920
+
+scale = wW/defW
+
+settings = require("settings")
 grid = require("grid")
 button = require("classes.button")
 require("player")

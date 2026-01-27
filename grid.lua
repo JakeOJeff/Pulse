@@ -58,8 +58,25 @@ function grid:load()
     typewriter = {
         index = 0,
         timer = 0,
-        speed = 0.05 -- seconds per character
+        speed = 0.1 -- seconds per character
     }
+
+    bgShader = love.graphics.newShader([[
+    extern number time;
+
+    vec4 effect(vec4 color, Image texture, vec2 texCoords, vec2 screenCoords)
+    {
+        vec4 pixel = Texel(texture, texCoords);
+
+        // subtle wave based on Y position
+        float wave = sin(texCoords.y * 20.0 + time) * 0.05;
+
+        pixel.rgb += wave;
+
+        return pixel * color;
+    }
+]])
+
 end
 
 function grid:startShake(str, time)
@@ -68,6 +85,11 @@ function grid:startShake(str, time)
 end
 
 function grid:update(dt)
+
+    if bgShader then
+    bgShader:send("time", love.timer.getTime())
+end
+
     if #grid.explosionQueue > 0 then
         self.explosionTimer = self.explosionTimer + dt
         self.explosionTime = self.explosionTime + dt
@@ -183,7 +205,7 @@ function grid:update(dt)
         typewriter.index = typewriter.index + 1
 
         if typewriter.index > #(currentPlayer.name.. " | " .. currentPlayer.score) then
-            typewriter.index = 0 -- loop back
+            typewriter.index = 1 -- loop back
         end
     end
 end
@@ -338,11 +360,15 @@ function grid:mousepressed(x, y, button)
 end
 
 function grid:draw()
-    love.graphics.push()
-    love.graphics.scale(scale, scale)
-    love.graphics.draw(self.imgs.bg)
+love.graphics.push()
+love.graphics.scale(scale, scale)
 
-    love.graphics.pop()
+love.graphics.setShader(bgShader)
+love.graphics.draw(self.imgs.bg)
+love.graphics.setShader()
+
+love.graphics.pop()
+
     love.graphics.push()
 
     if self.shakeTime > 0 then
@@ -381,15 +407,26 @@ function grid:draw()
                 scaleY
             )
 
+            -- if self.cells[i][j].pulses > 0 then
+            --                     love.graphics.setColor(self.cells[i][j].color[1] * ((self.cells[i][j].pulses * 0.25 )/ 1), self.cells[i][j].color[2] * ((self.cells[i][j].pulses * 0.25 )/ 1), self.cells[i][j].color[3] * ((self.cells[i][j].pulses * 0.25 )/ 1), 0.5)
+            --     --
+            --     love.graphics.rectangle("fill", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+            -- end
+
 
             for _, p in ipairs(self.movingPulses) do
+                love.graphics.setColor(1,1,1,0.5)
+                love.graphics.circle("fill", p.x, p.y, self.size / 5)
                 love.graphics.setColor(p.color)
                 love.graphics.circle("fill", p.x, p.y, self.size / 6)
             end
 
-            love.graphics.setColor(cell.color)
 
             for i = 1, #cell.circles do
+                love.graphics.setColor(1,1,1,0.5)
+                love.graphics.circle("fill", cell.circles[i][1], cell.circles[i][2], cell.circles[i][3] * 1.2)
+
+                love.graphics.setColor(cell.color)
                 love.graphics.circle("fill", cell.circles[i][1], cell.circles[i][2], cell.circles[i][3])
             end
 
@@ -406,43 +443,48 @@ function grid:draw()
     love.graphics.pop()
 
     -- UI / HUD (NO SCALE)
-    love.graphics.push()
+   love.graphics.push()
 
-    local startX = self.size
-    local startY = (self.size + self.height + 10)
-    local lineHeight = font:getHeight() + 6
-    for i, v in ipairs(activePlayers) do
-        love.graphics.setColor(v.color)
+local startX = self.size
+local startY = self.size + self.height + 10
+local lineHeight = font:getHeight() + 6
+local time = love.timer.getTime()
 
-        local nameToDraw = v.name
-        local prefix = ""
-
-        if v == currentPlayer then
-            prefix = "[] : | "
-
-        end
-
-        love.graphics.print(
-            prefix .. v.name .. " | " .. v.score,
-            startX,
-            startY + (i - 1) * lineHeight
-        )
-
-        if v == currentPlayer then
-                    love.graphics.setColor(v.color[1] - 0.1, v.color[2] - 0.1, v.color[3] - 0.1)
-
-                        nameToDraw = string.sub(v.name.. " | " .. v.score, 1, typewriter.index)
-            love.graphics.print(
-            prefix .. nameToDraw,
-            startX,
-            startY + (i - 1) * lineHeight
-        )
-        end
+for i, v in ipairs(activePlayers) do
+    local yPos = startY + (i - 1) * lineHeight
+    local isCurrentPlayer = (v == currentPlayer)
+    
+    -- Subtle pulse effect for current player
+    local pulseAlpha = 1
+    if isCurrentPlayer then
+        pulseAlpha = 0.85 + math.sin(time * 3) * 0.15
     end
+    
+    -- Draw player name and score
+    local displayText = v.name .. " | " .. v.score
+    local prefix = isCurrentPlayer and "▶ " or "  "
+    
+    -- Background glow for current player
+    if isCurrentPlayer then
+        love.graphics.setColor(v.color[1], v.color[2], v.color[3], 0.2)
+        love.graphics.rectangle("fill", startX - 8, yPos - 2, 
+            font:getWidth(prefix .. displayText) + 12, lineHeight - 2, 4)
+    end
+    
+    -- Main text
+    love.graphics.setColor(v.color[1], v.color[2], v.color[3], pulseAlpha)
+    love.graphics.print(prefix .. displayText, startX, yPos)
+    
+    -- Typewriter effect for current player
+    -- if isCurrentPlayer and typewriter.index then
+    --     local typewriterText = string.sub(displayText, 1, typewriter.index)
+    --     love.graphics.setColor(1, 1, 1, 0.5)
+    --     love.graphics.print(prefix .. typewriterText, startX, yPos)
+    -- end
+end
 
-
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.pop()
+love.graphics.setColor(1, 1, 1, 1)
+love.graphics.pop()
 end
 
 return grid

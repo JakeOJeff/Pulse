@@ -54,6 +54,12 @@ function grid:load()
             -- self.cells[i][j].pulses = 4
         end
     end
+
+    typewriter = {
+        index = 0,
+        timer = 0,
+        speed = 0.05 -- seconds per character
+    }
 end
 
 function grid:startShake(str, time)
@@ -166,6 +172,19 @@ function grid:update(dt)
         #self.movingPulses == 0 then
         self.turnResolved = false
         self:evaluateWinState()
+    end
+
+    if not currentPlayer then return end
+
+    typewriter.timer = typewriter.timer + dt
+
+    if typewriter.timer >= typewriter.speed then
+        typewriter.timer = 0
+        typewriter.index = typewriter.index + 1
+
+        if typewriter.index > #(currentPlayer.name.. " | " .. currentPlayer.score) then
+            typewriter.index = 0 -- loop back
+        end
     end
 end
 
@@ -386,28 +405,44 @@ function grid:draw()
 
     love.graphics.pop()
 
--- UI / HUD (NO SCALE)
-love.graphics.push()
+    -- UI / HUD (NO SCALE)
+    love.graphics.push()
 
-local startX = self.size
-local startY = (self.size + self.height + 10)
-local lineHeight = font:getHeight() + 6
+    local startX = self.size
+    local startY = (self.size + self.height + 10)
+    local lineHeight = font:getHeight() + 6
+    for i, v in ipairs(activePlayers) do
+        love.graphics.setColor(v.color)
 
-for i, v in ipairs(activePlayers) do
-    love.graphics.setColor(v.color)
+        local nameToDraw = v.name
+        local prefix = ""
 
-    love.graphics.print(
-        string.sub(v.name, 1, 1) .. " | " .. v.score,
-        startX,
-        startY + (i - 1) * lineHeight
-    )
-end
+        if v == currentPlayer then
+            prefix = "[] : | "
 
-love.graphics.setColor(1, 1, 1, 1)
-love.graphics.pop()
+        end
 
+        love.graphics.print(
+            prefix .. v.name .. " | " .. v.score,
+            startX,
+            startY + (i - 1) * lineHeight
+        )
 
+        if v == currentPlayer then
+                    love.graphics.setColor(v.color[1] - 0.1, v.color[2] - 0.1, v.color[3] - 0.1)
 
+                        nameToDraw = string.sub(v.name.. " | " .. v.score, 1, typewriter.index)
+            love.graphics.print(
+            prefix .. nameToDraw,
+            startX,
+            startY + (i - 1) * lineHeight
+        )
+        end
     end
+
+
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.pop()
+end
 
 return grid

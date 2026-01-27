@@ -50,7 +50,7 @@ function banner:update(dt)
     if self.state == "visible" then
         self.time = self.time + dt
 
-        if self.time > 0.23 then
+        if self.time > 0.5 then
             self.state = "disappearing"
             self.time = 0
         end

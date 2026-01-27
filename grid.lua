@@ -387,6 +387,14 @@ love.graphics.pop()
                 love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
                 love.graphics.setColor(1, 1, 1)
             elseif gameState == "WIN" and winner then
+                local winText = winner.name.." has won!"
+                love.graphics.setFont(font)
+                love.graphics.print(winText, wW/2 - font:getWidth(winText)/2, wH/2 - font:getHeight())
+                local winColor = winner.color
+                table.insert(winColor, 0.1)
+                love.graphics.setColor(winColor)
+                love.graphics.rectangle("fill", wW/2 - font:getWidth(winText)/2, wH/2 - font:getHeight(), font:getWidth(winner.name), font:getHeight(), 10, 10)
+                
                 local fluidity = math.abs(math.sin(love.timer.getTime() + j))
                 love.graphics.setColor(1, 1, 1, fluidity)
             end

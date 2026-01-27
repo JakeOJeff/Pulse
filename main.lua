@@ -23,8 +23,8 @@ function love.load()
     Hfont = love.graphics.newFont("assets/fonts/toxigenesis.otf", 100 * scale)
     font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 60 * scale)
 
-    winner = nil
-    gameState = nil
+    winner = players[3]
+    gameState = "WIN"
 end
 
 function love.update(dt)

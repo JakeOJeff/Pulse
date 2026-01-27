@@ -79,24 +79,46 @@ end
 
 
 function banner:draw()
-    
-    if self.state ~= "inactive" then
-        
-        love.graphics.push()
-        love.graphics.scale(scale/2, scale/2)
-        love.graphics.translate(self.pos.x, self.pos.y)
+    if self.state == "inactive" then return end
 
-        love.graphics.draw(self.img)
+    love.graphics.push()
+    love.graphics.scale(scale / 2, scale / 2)
+    love.graphics.translate(self.pos.x, self.pos.y)
 
-        love.graphics.pop()
+    local bw = self.img:getWidth()
 
-        love.graphics.setFont(font)
+    -- Banner
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(self.img)
 
-        love.graphics.print(recentPowerup, self.pos.x, self.pos.y)
+    -- Powerup text (centered)
+    love.graphics.setFont(Hfont)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.printf(
+        recentPowerup,
+        0,
+        12,
+        bw,
+        "center"
+    )
 
-    end
+    -- Player name (centered)
+    love.graphics.setFont(font)
+    love.graphics.setColor(currentPlayer.color)
+    love.graphics.printf(
+        currentPlayer.name,
+        0,
+        42,
+        bw,
+        "center"
+    )
 
+    love.graphics.pop()
+
+    -- Reset color
+    love.graphics.setColor(1, 1, 1, 1)
 end
+
 
 
 return banner

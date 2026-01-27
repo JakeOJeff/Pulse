@@ -21,6 +21,9 @@ function button:new(x, y, text, func, img)
     end
     self.hovering = false
 
+    table.insert(buttons, self) 
+    return self
+
 end
 
 function button:update(dt)
@@ -41,3 +44,5 @@ function button:draw()
         love.graphics.pop()
     end
 end
+
+return button

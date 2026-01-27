@@ -45,14 +45,19 @@ players = {
     --     eliminated = false
     -- }
 }
-activePlayers = players
+
+
+function loadPlayers()
+    activePlayers = players
 playerIndex = 1
 totalPlayers = #activePlayers
 
 currentPlayer = activePlayers[playerIndex]
+end
 
-function loadPlayers()
-    powerupRoundsLeft = love.math.random(1, 6)
+function updatePowerupLeft()
+        powerupRoundsLeft = love.math.random(1, 6)
+
 end
 function updatePlayers()
 

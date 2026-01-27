@@ -13,17 +13,16 @@ button = require("classes.button")
 require("player")
 require("powerup")
 
-defW = 1080
-defH = 1920
-
-scale = wW/defW
 
 function love.load()
     grid:load()
-    banner:load()
     loadPlayers()
-    Hfont = love.graphics.newFont("assets/fonts/toxigenesis.otf", 100)
-    font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 60)
+    updatePowerupLeft()
+        banner:load()
+
+    Hfont = love.graphics.newFont("assets/fonts/toxigenesis.otf", 100 * scale)
+    font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 60 * scale)
+
     winner = nil
     gameState = nil
 end

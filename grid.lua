@@ -57,7 +57,7 @@ function grid:load()
 end
 
 function grid:startShake(str, time)
-    self.shakeStrength = str * settings.shakeStrength/10
+    self.shakeStrength = str * settings.shakeStrength / 10
     self.shakeTime = time
 end
 
@@ -88,8 +88,7 @@ function grid:update(dt)
     if self.shakeTime > 0 then
         self.shakeTime = self.shakeTime - dt
     else
-                self.shakeStrength = 0
-
+        self.shakeStrength = 0
     end
     for i, v in ipairs(activePlayers) do
         v.score = 0
@@ -260,8 +259,7 @@ function explodeCell(cell, i, j)
             })
         end
     end
-        grid:startShake(grid.explosionTime, 0.15)
-
+    grid:startShake(grid.explosionTime, 0.15)
 end
 
 function grid:mousepressed(x, y, button)
@@ -304,10 +302,9 @@ function grid:mousepressed(x, y, button)
                             events[randomVal].func(currentPlayer)
                             recentPowerup = events[randomVal].name
                             recentPowerupPlayer = currentPlayer
-                                    banner:setActive()
+                            banner:setActive()
 
                             powerupRoundsLeft = love.math.random(2, 6)
-
                         end
 
                         -- next player
@@ -322,7 +319,6 @@ function grid:mousepressed(x, y, button)
 end
 
 function grid:draw()
-
     love.graphics.push()
     love.graphics.scale(scale, scale)
     love.graphics.draw(self.imgs.bg)
@@ -341,18 +337,19 @@ function grid:draw()
 
 
             if not gameState then
-                -- love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 1)
-                love.graphics.setColor(1,1,1)
+                love.graphics.setColor(currentPlayer.color[1], currentPlayer.color[2], currentPlayer.color[3], 1)
+                --
                 love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
+                love.graphics.setColor(1, 1, 1)
             elseif gameState == "WIN" and winner then
                 local fluidity = math.abs(math.sin(love.timer.getTime() + j))
-                love.graphics.setColor(1,1,1, fluidity)
+                love.graphics.setColor(1, 1, 1, fluidity)
             end
             -- love.graphics.rectangle("line", self.cells[i][j].x, self.cells[i][j].y, self.size, self.size)
             self.cellImgW = self.imgs.cell:getWidth()
             self.cellImgH = self.imgs.cell:getHeight()
 
-            
+
             local scaleX = self.size / self.cellImgW
             local scaleY = self.size / self.cellImgH
 
@@ -389,14 +386,28 @@ function grid:draw()
 
     love.graphics.pop()
 
-    love.graphics.setColor(currentPlayer.color)
-    love.graphics.print("|Current Player " .. powerupRoundsLeft .. "\n| Powerup " .. recentPowerup, self.size,
-        self.size + self.height + 20)
-    for i, v in ipairs(activePlayers) do
-        love.graphics.setColor(v.color)
-        love.graphics.print(v.name .. " | " .. v.score .. " | ", self.size, self.size + self.height + 50 + 20 * i)
-    end
-    love.graphics.setColor(1, 1, 1)
+-- UI / HUD (NO SCALE)
+love.graphics.push()
+
+local startX = self.size
+local startY = (self.size + self.height + 10)
+local lineHeight = font:getHeight() + 6
+
+for i, v in ipairs(activePlayers) do
+    love.graphics.setColor(v.color)
+
+    love.graphics.print(
+        string.sub(v.name, 1, 1) .. " | " .. v.score,
+        startX,
+        startY + (i - 1) * lineHeight
+    )
 end
+
+love.graphics.setColor(1, 1, 1, 1)
+love.graphics.pop()
+
+
+
+    end
 
 return grid

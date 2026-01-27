@@ -11,13 +11,16 @@ function banner:load()
     self.time = 0
     self.duration = 0.5 -- Increase duration for smoother animation
 
+local logicalH = wH / scale
 
-    local s = scale
-    local logicalH = wH / s
+
 
     self.pos = {
         x = -self.img:getWidth(), -- start off-screen (left)
-        y = logicalH / 2 - self.img:getHeight() / 2
+        -- y = logicalH / 2 - self.img:getHeight() / 2
+
+        y = ((grid.size) + 20*scale + grid.height) / scale
+
     }
 
 end
@@ -47,7 +50,7 @@ function banner:update(dt)
     if self.state == "visible" then
         self.time = self.time + dt
 
-        if self.time > 0.6 then
+        if self.time > 0.23 then
             self.state = "disappearing"
             self.time = 0
         end
@@ -91,35 +94,41 @@ function banner:draw()
 
     local bw = self.img:getWidth()
 
-    -- Banner
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(self.img)
 
-    -- Powerup text (centered)
+    love.graphics.pop()
+
+    love.graphics.push()
+
+    -- Convert coords back to screen space
+    local textX = (self.pos.x) * scale
+    local textY = (self.pos.y) * scale
+
+    -- Powerup text
     love.graphics.setFont(Hfont)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.printf(
         recentPowerup,
-        0,
-        100,
-        bw,
+        textX,
+        textY + 100 * scale,
+        bw * scale,
         "center"
     )
 
-    -- Player name (centered)
+    -- Player name
     love.graphics.setFont(font)
     love.graphics.setColor(recentPowerupPlayer.color)
     love.graphics.printf(
         recentPowerupPlayer.name,
-        0,
-        100 + Hfont:getHeight() * scale + 40,
-        bw,
+        textX,
+        textY + (100 + Hfont:getHeight() + 40) * scale,
+        bw * scale,
         "center"
     )
 
-    love.graphics.pop()
+    love.graphics.pop() -- unscaled text
 
-    -- Reset color
     love.graphics.setColor(1, 1, 1, 1)
 end
 

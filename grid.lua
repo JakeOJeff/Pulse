@@ -388,13 +388,17 @@ love.graphics.pop()
                 love.graphics.setColor(1, 1, 1)
             elseif gameState == "WIN" and winner then
                 local winText = winner.name.." has won!"
-                love.graphics.setFont(font)
-                love.graphics.print(winText, wW/2 - font:getWidth(winText)/2, wH/2 - font:getHeight())
+                love.graphics.setFont(Hfont)
+                love.graphics.print(winText, wW/2 - Hfont:getWidth(winText)/2, wH/2 - Hfont:getHeight())
                 local winColor = winner.color
                 table.insert(winColor, 0.1)
                 love.graphics.setColor(winColor)
-                love.graphics.rectangle("fill", wW/2 - font:getWidth(winText)/2, wH/2 - font:getHeight(), font:getWidth(winner.name), font:getHeight(), 10, 10)
-                
+                love.graphics.rectangle("fill", wW/2 - Hfont:getWidth(winText)/2, wH/2 - Hfont:getHeight(), Hfont:getWidth(winner.name), Hfont:getHeight(), 10, 10)
+                love.graphics.setFont(font)
+
+                love.graphics.setColor(1,1,1,1)
+                love.graphics.print("'R' to Restart",wW/2 - font:getWidth("'R' to Restart")/2, wH/2 + font:getHeight() )
+
                 local fluidity = math.abs(math.sin(love.timer.getTime() + j))
                 love.graphics.setColor(1, 1, 1, fluidity)
             end
@@ -423,16 +427,13 @@ love.graphics.pop()
 
 
             for _, p in ipairs(self.movingPulses) do
-                love.graphics.setColor(1,1,1,0.5)
-                love.graphics.circle("fill", p.x, p.y, self.size / 5)
+
                 love.graphics.setColor(p.color)
                 love.graphics.circle("fill", p.x, p.y, self.size / 6)
             end
 
 
             for i = 1, #cell.circles do
-                love.graphics.setColor(1,1,1,0.5)
-                love.graphics.circle("fill", cell.circles[i][1], cell.circles[i][2], cell.circles[i][3] * 1.2)
 
                 love.graphics.setColor(cell.color)
                 love.graphics.circle("fill", cell.circles[i][1], cell.circles[i][2], cell.circles[i][3])

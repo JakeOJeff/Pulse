@@ -22,6 +22,7 @@ function love.load()
     grid:load()
     banner:load()
     loadPlayers()
+    Hfont = love.graphics.newFont("assets/fonts/toxigenesis.otf", 25)
     font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 20)
     winner = nil
     gameState = nil
@@ -30,9 +31,7 @@ end
 function love.update(dt)
     grid:update(dt)
     banner:update(dt)
-    if love.mouse.isDown(1) then
-        banner:setActive()
-    end
+
 end
 
 function love.mousepressed(x, y, button)

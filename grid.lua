@@ -2,8 +2,11 @@ local grid = {}
 
 function grid:load()
     self.cells = {}
-    self.wC = 10
-    self.hC = 18 --20
+
+    self.gridNum = 1
+
+    self.wC = 10 * self.gridNum
+    self.hC = 16 * self.gridNum --20
 
     self.size = wW / (self.wC + 2)
 
@@ -300,7 +303,10 @@ function grid:mousepressed(x, y, button)
                             local randomVal = love.math.random(1, #events)
                             events[randomVal].func(currentPlayer)
                             recentPowerup = events[randomVal].name
+                                    banner:setActive()
+
                             powerupRoundsLeft = love.math.random(2, 6)
+
                         end
 
                         -- next player

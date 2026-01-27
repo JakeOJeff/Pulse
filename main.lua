@@ -46,8 +46,9 @@ function love.draw()
 end
 
 function love.resize(w, h)
-
-    
+    wW = w
+    wH = h
+    love:load()
 end
  
 function lerp(a,b,t)

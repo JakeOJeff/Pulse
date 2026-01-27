@@ -22,7 +22,7 @@ function love.load()
     grid:load()
     banner:load()
     loadPlayers()
-    Hfont = love.graphics.newFont("assets/fonts/toxigenesis.otf", 75)
+    Hfont = love.graphics.newFont("assets/fonts/toxigenesis.otf", 100)
     font = love.graphics.newFont("assets/fonts/toxigenesis.otf", 60)
     winner = nil
     gameState = nil

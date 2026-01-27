@@ -12,7 +12,7 @@ function banner:load()
     self.duration = 0.5 -- Increase duration for smoother animation
 
 
-    local s = scale / 2
+    local s = scale
     local logicalH = wH / s
 
     self.pos = {
@@ -29,7 +29,7 @@ function banner:update(dt)
         self.time = self.time + dt
         local t = math.min(self.time / self.duration, 1)
 
-        local logicalScreenW = wW / (scale / 2)
+        local logicalScreenW = wW / (scale)
 
         local startX = -self.img:getWidth()
         local endX   = logicalScreenW / 2 - self.img:getWidth() / 2
@@ -47,7 +47,7 @@ function banner:update(dt)
     if self.state == "visible" then
         self.time = self.time + dt
 
-        if self.time > 0.2 then
+        if self.time > 0.6 then
             self.state = "disappearing"
             self.time = 0
         end
@@ -58,7 +58,7 @@ function banner:update(dt)
         self.time = self.time + dt
         local t = math.min(self.time / self.duration, 1)
 
-        local logicalScreenW = wW / (scale / 2)
+        local logicalScreenW = wW / (scale)
 
         local startX = logicalScreenW / 2 - self.img:getWidth() / 2
         local endX   = logicalScreenW + self.img:getWidth()
@@ -67,6 +67,7 @@ function banner:update(dt)
 
         if t >= 1 then
             self.state = "inactive"
+            self.pos.x = -self.img:getWidth()
         end
     end
 end
@@ -74,15 +75,18 @@ end
 
 
 function banner:setActive()
-    self.state = "appearing"    
+    self.state = "appearing"
+    self.time = 0
+    self.pos.x = -self.img:getWidth()
 end
+
 
 
 function banner:draw()
     if self.state == "inactive" then return end
 
     love.graphics.push()
-    love.graphics.scale(scale / 2, scale / 2)
+    love.graphics.scale(scale, scale)
     love.graphics.translate(self.pos.x, self.pos.y)
 
     local bw = self.img:getWidth()
@@ -97,7 +101,7 @@ function banner:draw()
     love.graphics.printf(
         recentPowerup,
         0,
-        12,
+        100,
         bw,
         "center"
     )
@@ -108,7 +112,7 @@ function banner:draw()
     love.graphics.printf(
         currentPlayer.name,
         0,
-        42,
+        100 + Hfont:getHeight() * scale + 40,
         bw,
         "center"
     )

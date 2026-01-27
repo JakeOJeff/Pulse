@@ -24,6 +24,7 @@
 
 powerupRoundsLeft = 0
 recentPowerup = ""
+recentPowerupPlayer = nil
 events = {
     {
         name = "Triple Increment", -- Increases all pulses of the player to 3

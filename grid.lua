@@ -303,6 +303,7 @@ function grid:mousepressed(x, y, button)
                             local randomVal = love.math.random(1, #events)
                             events[randomVal].func(currentPlayer)
                             recentPowerup = events[randomVal].name
+                            recentPowerupPlayer = currentPlayer
                                     banner:setActive()
 
                             powerupRoundsLeft = love.math.random(2, 6)

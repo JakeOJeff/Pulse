@@ -108,9 +108,9 @@ function banner:draw()
 
     -- Player name (centered)
     love.graphics.setFont(font)
-    love.graphics.setColor(currentPlayer.color)
+    love.graphics.setColor(recentPowerupPlayer.color)
     love.graphics.printf(
-        currentPlayer.name,
+        recentPowerupPlayer.name,
         0,
         100 + Hfont:getHeight() * scale + 40,
         bw,

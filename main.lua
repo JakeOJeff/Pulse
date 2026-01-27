@@ -38,6 +38,12 @@ function love.mousepressed(x, y, button)
     grid:mousepressed(x, y, button)
 end
 
+function love.keypressed(key)
+    if key == "r" then
+        love.load()
+    end
+end
+
 function love.draw()
     love.graphics.setFont(font)
     grid:draw()

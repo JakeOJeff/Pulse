@@ -8,10 +8,13 @@ function banner:load()
 
     self.state = "inactive"
 
+    self.time = 0
+    self.duration = 0.5 -- Increase duration for smoother animation
+
 
     self.pos = {
         x = - (self.img:getWidth() * scale),
-        y = 0
+        y = wH/2 - (self.img:getHeight() * scale)/2
         
     }
 end
@@ -19,8 +22,17 @@ end
 function banner:update(dt)
     
     if self.state == "appearing" then
-        if self.pos.x < 0 then
-            self.pos.x = self.pos.x + 100 * dt
+        self.time = self.time + dt
+        local t = math.min(self.time / self.duration, 1) -- Normalize time over duration
+        
+        -- Calculate position based on easing
+        local startX = -(self.img:getWidth() * scale)
+        local endX = wW/2 - (self.img:getWidth() * scale)/2 -- Center it horizontally
+        self.pos.x = startX + (endX - startX) * easeOutBack(t)
+        
+        if t >= 1 then
+            self.state = "visible"
+            self.pos.x = endX -- Lock to final position
         end
     end
 
@@ -33,7 +45,7 @@ end
 
 function banner:draw()
     
-    if not self.state == "inactive" then
+    if self.state ~= "inactive" then
         
         love.graphics.push()
         love.graphics.scale(scale, scale)

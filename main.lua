@@ -25,6 +25,10 @@ function love.load()
 
     winner = nil
     gameState = nil
+    local osName = love.system.getOS()
+    if osName == 'iOS' or osName == 'Android' then
+        love.window.setFullscreen(true)
+    end
 end
 
 function love.update(dt)
